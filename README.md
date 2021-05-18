@@ -1,13 +1,24 @@
 ![Godot Bluetooth](/_img_/header.png?raw=true "Godot Bluetooth")
 
-This module is a native Bluetooth implementation intended to perform fundamental tasks in a communication between Microcontrollers (especially Arduino) and Games/Applications, made with Godot Engine, running inside Android. At the moment this module doesn't support communication between two mobile devices, but such functionality can be added in the future.
+This module is a native Bluetooth implementation intended to perform fundamental tasks in a communication between bluetooth devices, made with Godot Engine, running inside Android.
+It does not support iOS Bluetooth Low-Energy (BLE) at the moment, but could be added in the future.
 
-The module has been tested with [Godot-2.1.x-stable](https://github.com/godotengine/godot/releases) and *HC-05/06* Bluetooth module(hardware) on an *Arduino Uno R3*.
+The module has been tested with:
+[Godot 3.3 Stable](https://github.com/godotengine/godot/releases)
+ESP-32S microcontroller
+Multiple android devices
+
+## Credits
+This fork is based on work done by [faverete](https://github.com/favarete/GodotBluetooth) and [DisDoh](https://github.com/DisDoh/GodotBluetooth)
 
 ## Available Features
-> Native Dialog Box Layout;
+> Native dialog box layout for easy device connection
 
-> Easy Implementation Of Custom Layouts Inside Godot. 
+> Easy implementation of custom layouts inside Godot 
+
+> Communication with microcontrollers with bluetooth
+
+> Communication between two mobile devices running android
 
 ## Build/Compile Module
 1. Copy the "GodotBluetooth" folder to the *modules* folder inside of Godot's source code;
