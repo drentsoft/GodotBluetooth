@@ -1,12 +1,12 @@
 ![Godot Bluetooth](/_img_/header.png?raw=true "Godot Bluetooth")
 
-This module is a native Bluetooth implementation intended to perform fundamental tasks in a communication between bluetooth devices, made with Godot Engine, running inside Android.
-It does not support iOS Bluetooth Low-Energy (BLE) at the moment, but could be added in the future.
+This module is a native Bluetooth implementation intended to perform fundamental tasks in a communication between bluetooth devices, built for use in Godot Engine, running on the Android platform.
+It does not support iOS Bluetooth Low-Energy (BLE) at the moment, but it could be added in the future.
 
 The module has been tested with:
-[Godot 3.3 Stable](https://github.com/godotengine/godot/releases)
-ESP-32S microcontroller
-Multiple android devices
+[Godot 3.3 Stable](https://github.com/godotengine/godot/releases);
+ESP-32S microcontroller;
+Multiple android devices;
 
 ## Credits
 This fork is based on work done by [faverete](https://github.com/favarete/GodotBluetooth) and [DisDoh](https://github.com/DisDoh/GodotBluetooth)
@@ -19,6 +19,30 @@ This fork is based on work done by [faverete](https://github.com/favarete/GodotB
 > Communication with microcontrollers with bluetooth
 
 > Communication between two mobile devices running android
+
+## Plugin Installation
+This module has been updated to be used with Godot's new android .aar based plugin system, and so, it must be used with Godot 3.2.2+;
+[Godot 3.3 Release Plugin](https://github.com/AC-Webbyninja/GodotBluetooth);
+[Godot 3.2.2 Release Plugin](https://github.com/AC-Webbyninja/GodotBluetooth);
+;
+To install this plugin in your Godot, you must create a [custom android build](https://docs.godotengine.org/en/stable/getting_started/workflow/export/android_custom_build.html#doc-android-custom-build) for your project. Creating a custom android build
+in itself requires that you setup your system to [export for android](https://docs.godotengine.org/en/stable/getting_started/workflow/export/exporting_for_android.html#doc-exporting-for-android).;
+;
+After completting these steps, the plugin installation is very straight forward.;
+Download the proper release listed above for your version of Godot or you can build the plugin yourself by following the steps in "Building the Plugin" below.;
+;
+Extract GodotBluetooth.aar and GodotBluetooth.gdap into the android/plugins folder in your project that was created from creating a custom android build.
+![Godot Bluetooth](/_img_/plugin_installation1.png?raw=true "Godot Bluetooth")
+
+Make sure that "use custom build" and "Godot Bluetooth" are checked under the runnable android export template in the export dialog.
+![Godot Bluetooth](/_img_/plugin_installation2.png?raw=true "Godot Bluetooth")
+
+Make sure that "Bluetooth", "Bluetooth Admin", and "Access Fine Location" permissions are checked in the export dialog.
+![Godot Bluetooth](/_img_/plugin_installation3.png?raw=true "Godot Bluetooth")
+![Godot Bluetooth](/_img_/plugin_installation4.png?raw=true "Godot Bluetooth")
+
+
+Deploy your project!
 
 ## Build/Compile Module
 1. Copy the "GodotBluetooth" folder to the *modules* folder inside of Godot's source code;
