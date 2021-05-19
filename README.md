@@ -3,7 +3,7 @@
 This module is a native Bluetooth implementation intended to perform fundamental tasks in a communication between bluetooth devices, built for use in Godot Engine, running on the Android platform.
 It does not support iOS Bluetooth Low-Energy (BLE) at the moment, but it could be added in the future.
 
-The module has been tested with:<br/>
+The plugin has been tested with:<br/>
 > [Godot 3.3 Stable](https://github.com/godotengine/godot/releases)<br/>
 > ESP-32S microcontroller<br/>
 > Multiple android devices<br/>
@@ -20,9 +20,10 @@ This fork is based on work done by [faverete](https://github.com/favarete/GodotB
 ## Plugin Installation
 This module has been updated to be used with Godot's new android .aar based plugin system, and so, it must be used with Godot 3.2.2+
 
-[Godot 3.3 Release Plugin](https://github.com/AC-Webbyninja/GodotBluetooth)<br/>
-[Godot 3.2.2 Release Plugin](https://github.com/AC-Webbyninja/GodotBluetooth)<br/>
-TODO: Add Releases ^^
+[Godot 3.3.1 Release Plugin](https://github.com/AC-Webbyninja/GodotBluetooth/releases/tag/3.3.1)<br/>
+[Godot 3.3 Release Plugin](https://github.com/AC-Webbyninja/GodotBluetooth/releases/tag/3.3)<br/>
+<br/>
+**[note]** Newer builds may successfully compile, but not fully be bug tested. They may result in unexpected crashes.
 
 To install this plugin in your Godot, you must create a [custom android build](https://docs.godotengine.org/en/stable/getting_started/workflow/export/android_custom_build.html#doc-android-custom-build) for your project. Creating a custom android build
 in itself requires that you setup your system to [export for android](https://docs.godotengine.org/en/stable/getting_started/workflow/export/exporting_for_android.html#doc-exporting-for-android).<br/>
@@ -228,6 +229,6 @@ signal message_received(message_string)
 ___
 
 ## TODO
-> Add built .aar/.gdap releases<br/>
 > Add device pairing through godot<br/>
-> Finish readme documentation(Building)
+> Finish readme documentation(Building)<br/>
+> Revise messaging system<br/>

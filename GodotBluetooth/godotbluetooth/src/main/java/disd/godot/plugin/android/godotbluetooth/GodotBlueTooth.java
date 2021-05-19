@@ -48,7 +48,7 @@ import disd.godot.plugin.android.oscP5.OscMessage;
  * Created by Rodrigo Favarete, Mad Forest Games' Lead Game Developer, on September 8, 2017
  */
 
-public class GodotBlueTooth extends GodotPlugin {
+public class GodotBluetooth extends GodotPlugin {
 
     protected Activity activity = null;
 
@@ -73,7 +73,7 @@ public class GodotBlueTooth extends GodotPlugin {
     String remoteBluetoothName;
     String remoteBluetoothAddress;
     String[] externalDevicesDialogAux;
-    private static final String TAG = "GodotBlueTooth";
+    private static final String TAG = "GodotBluetooth";
 
 
 	/** The current connections. */
@@ -109,7 +109,7 @@ public class GodotBlueTooth extends GodotPlugin {
      * Constructor
      */
 
-    public GodotBlueTooth(Godot godot) {
+    public GodotBluetooth(Godot godot) {
         super(godot);
         activity = getActivity();
         localHandler = null;
@@ -118,41 +118,13 @@ public class GodotBlueTooth extends GodotPlugin {
     @NonNull
     @Override
     public String getPluginName() {
-        return "GodotBlueTooth";
+        return "GodotBluetooth";
     }
-
-//    @NonNull
-//    @Override
-//    public List<String> getPluginMethods() {
-//        return Arrays.asList(
-//                "init",
-//                "getPairedDevices",
-//                "getDeviceName",
-//                "getDeviceMacAdress",
-//                "connect",
-//                "sendMsg",
-//                "msgSetName",
-//                "msgAddString",
-//                "startServerThread",
-//                "isServer",
-//                "resetConnection");
-//    }
 
     @NonNull
     @Override
     public Set<SignalInfo> getPluginSignals() {
         Set<SignalInfo> signals = new ArraySet<>();
-
-//        signals.add(new SignalInfo("on_disconnected"));
-//        signals.add(new SignalInfo("on_disconnected_from_server", String.class, String.class));
-//        signals.add(new SignalInfo("on_data_received_string", Object.class));
-//        signals.add(new SignalInfo("on_single_device_found", String.class, String.class, String.class));
-//        signals.add(new SignalInfo("on_disconnected_from_pair"));
-//        signals.add(new SignalInfo("on_connected", String.class, String.class));
-//        signals.add(new SignalInfo("on_connected_error"));
-//        signals.add(new SignalInfo("on_received_connection", String.class, String.class));
-//        signals.add(new SignalInfo("on_getting_uuid", String.class));
-//        signals.add(new SignalInfo("on_devices_found", Object.class, Object.class));
 		
 		signals.add(new SignalInfo("status_updated", String.class));
 		signals.add(new SignalInfo("error_thrown", String.class));
@@ -217,7 +189,7 @@ public class GodotBlueTooth extends GodotPlugin {
                                             newMsg[i - 1] = String.valueOf(m.get(i));
                                         }
                                         msgIncrReceived = 0;
-                                        emitSignal("message_received", newMsg);
+                                        emitSignal("message_received", new Object[]{newMsg});
                                         //Log.e(TAG, "_on_data_received_string and send to Godot");
                                     } else if (msgIncrReceived > firstLimit && msgIncrReceived <= secondLimit) {
                                         if (!secondPart) {
@@ -231,7 +203,7 @@ public class GodotBlueTooth extends GodotPlugin {
                                             }
                                             secondPart = false;
                                             msgIncrReceived = 0;
-                                            emitSignal("message_received", newMsg);
+                                            emitSignal("message_received", new Object[]{newMsg});
                                             //Log.e(TAG, "_on_data_received_string and send to Godot");
                                         }
                                     } else if (msgIncrReceived > secondLimit && msgIncrReceived <= thirdLimit) {
@@ -253,7 +225,7 @@ public class GodotBlueTooth extends GodotPlugin {
                                             secondPart = false;
                                             thirdPart = false;
                                             msgIncrReceived = 0;
-                                            emitSignal("message_received", newMsg);
+                                            emitSignal("message_received", new Object[]{newMsg});
                                         }
                                     }
                                 }
@@ -324,7 +296,7 @@ public class GodotBlueTooth extends GodotPlugin {
                 public void run() {
                     if(connected) {
 						emitSignal("status_updated", "overriding open connection");
-						closeConnection();
+						close_connection();
                     }
                     if (nativeDialog){
                         nativeLayoutDialogBox();
@@ -434,7 +406,7 @@ public class GodotBlueTooth extends GodotPlugin {
 								connected = true;
 							}
 							else{
-								closeConnection();
+								close_connection();
 							}
 						}
 				});
@@ -453,7 +425,7 @@ public class GodotBlueTooth extends GodotPlugin {
 * Reset connection status'
      */
     @UsedByGodot
-    public void closeConnection()
+    public void close_connection()
     {
         emitSignal("device_disconnected");
         if (cThreadClient != null) {
@@ -668,7 +640,7 @@ public class GodotBlueTooth extends GodotPlugin {
     public void sendDataByte()
     {
         if (!localBluetooth.isEnabled()) {
-            closeConnection();
+            close_connection();
             return;
         }
 

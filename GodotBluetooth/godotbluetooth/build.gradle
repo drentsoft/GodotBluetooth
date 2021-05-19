@@ -25,7 +25,7 @@ android {
 
     libraryVariants.all { variant ->
         variant.outputs.all { output ->
-            output.outputFileName = "GodotBlueTooth.aar"
+            output.outputFileName = "GodotBluetooth.aar"
         }
     }
 
