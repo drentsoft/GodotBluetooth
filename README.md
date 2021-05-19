@@ -12,10 +12,10 @@ The module has been tested with:<br/>
 This fork is based on work done by [faverete](https://github.com/favarete/GodotBluetooth) and [DisDoh](https://github.com/DisDoh/GodotBluetooth).
 
 ## Available Featuress
-> Native dialog box layout for easy device connection
-> Easy implementation of custom layouts inside Godot 
-> Communication with microcontrollers with bluetooth
-> Communication between two mobile devices running android
+> Native dialog box layout for easy device connection<br/>
+> Easy implementation of custom layouts inside Godot<br/>
+> Communication with microcontrollers with bluetooth<br/>
+> Communication between two mobile devices running android<br/>
 
 ## Plugin Installation
 This module has been updated to be used with Godot's new android .aar based plugin system, and so, it must be used with Godot 3.2.2+
@@ -192,6 +192,7 @@ ___
 
 ```GDScript
 func set_message_name(message_name:String) -> void
+```
 
 Creates a new OSC message and sets the name of the message. It clears the any previously cached message.<br/>
 <br/>
