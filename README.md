@@ -77,52 +77,74 @@ To get the list of paired devices:
 ```GDScript
 
 func poll_paired_devices(use_native_layout:bool) -> void:
-	if (bluetooth):
-		bluetooth.poll_paired_devices(use_native_layout)
+	if (bluetooth_controller):
+		bluetooth_controller.poll_paired_devices(use_native_layout)
 
 ```
 
-After calling poll_paried_devices, devices will be returned to GDScript through the signal device_found.<br/>
+After calling poll_paired_devices, devices will be returned to GDScript through the signal device_found.<br/>
 You can use connect(device_id) to connect to a device from this list.<br/>
 
 ## API Reference
-The following functions are available:
 
-**Startup Function**
+**Initialize Bluetooth**
 
 ```GDScript
-void init(get_instance_ID(), bool bluetoothRequired)
+func init(bluetooth_required:bool) -> void
 ```
-The *bluetoothRequired* is a boolean that tells if the bluetooth is required inside the game/application. If `true`, the game/application will close when the bluetooth is off and the user refuses to activate on the startup, if `false`, the game/application will continue in the occurrence of the same situation.
+Initializes bluetooth functionality.<br/>
+The *bluetooth_required* is a boolean that tells if the bluetooth is required inside the game/application. If `true`, the game/application will close when the bluetooth is off and the user refuses to activate on the startup, if `false`, the game/application will continue in the occurrence of the same situation.
 
 ___
 
-**Paired Devices Layout**
+**Poll Paired Devices**
 
 ```GDScript
-void getPairedDevices(bool nativeLayout)
+func poll_paired_devices(use_native_layout:bool) -> void
 ```
-The *nativeLayout* is a boolean that tells the module that, if `true`, you want the *Native Layout* showing the list of paired devices, if `false`, you want to build your own *Custom Layout* inside Godot.  
+Polls the list of paired devices and returns them using the `device_found` signal.<br/>
+The *use_native_layout* is a boolean that tells the module that, if `true`, you want the *Device Native Layout* showing the list of paired devices, if `false`, you want to build your own *Custom Layout* inside Godot.  
 
-**For *Custom Layouts* Only**
+**Connect**
 
 ```GDScript
-void connect(int deviceID)
+func connect(device_id:int) -> void
 ```
-The *deviceID* is an integer representing the device you want to connect, only when using *Custom Layouts* you need to use this function, to get the *deviceID* see the `_on_single_device_found` on the callbacks section bellow. In summary, when using *Custom Layouts* you'll create your own visualization screen of paired devices and when the user chooses any of them you'll need to call this function to complete the connection.
+
+Attempts to connect to the given `device_id`.
+The *device_id* is an integer representing the device you want to connect. You only need to use this function when using *Custom Layouts*.
 
 ___
 
-**Send Data**
+**Start Server Thread**
 
 ```GDScript
-void sendData(String stringData)
-void sendDataBytes(RawArray byteData)
+func start_server_thread() -> void
 ```
-The *stringData* is a string containing the data you want to send, the module will take care of transforming this string into a byte array to perform comunication. The *byteData* is a raw array, in case you want to send the byte array directly.
+
+Starts a server thread on the android device to allow for accepting connections from other android devices. The results and actions of connections are controlled by signals similar to Godot's high-level networking.
 
 ___
 
+**Close Connection**
+
+```GDScript
+func close_connection() -> void
+```
+
+Stops all bluetooth related threads and closes any open bluetooth connections.
+
+___
+
+**Get UUID**
+
+```GDScript
+func get_uuid() -> String
+```
+
+Returns the UUID of the current android device.
+
+___
 **Callbacks**
 
 ```GDScript
