@@ -3,15 +3,15 @@
 This module is a native Bluetooth implementation intended to perform fundamental tasks in a communication between bluetooth devices, built for use in Godot Engine, running on the Android platform.
 It does not support iOS Bluetooth Low-Energy (BLE) at the moment, but it could be added in the future.
 
-The module has been tested with:
-	[Godot 3.3 Stable](https://github.com/godotengine/godot/releases)<br/>
-	ESP-32S microcontroller<br/>
-	Multiple android devices<br/>
+The module has been tested with:<br/>
+> [Godot 3.3 Stable](https://github.com/godotengine/godot/releases)<br/>
+> ESP-32S microcontroller<br/>
+> Multiple android devices<br/>
 
 ## Credits
 This fork is based on work done by [faverete](https://github.com/favarete/GodotBluetooth) and [DisDoh](https://github.com/DisDoh/GodotBluetooth).
 
-## Available Features
+## Available Featuress
 > Native dialog box layout for easy device connection
 
 > Easy implementation of custom layouts inside Godot 
@@ -36,63 +36,54 @@ Download the proper release listed above for your version of Godot or you can bu
 Extract GodotBluetooth.aar and GodotBluetooth.gdap into the android/plugins folder in your project that was created from creating a custom android build.<br/>
 ![Plugin Installation](/_img_/plugin_installation1.png?raw=true "Plugin Installation")
 <br/>
+<br/>
 Make sure that "use custom build" and "Godot Bluetooth" are checked under the runnable android export template in the export dialog.<br/>
 ![Plugin Installation](/_img_/plugin_installation2.png?raw=true "Plugin Installation")
 <br/>
+<br/>
 Make sure that "Bluetooth", "Bluetooth Admin", and "Access Fine Location" permissions are checked in the export dialog.<br/>
 ![Plugin Installation](/_img_/plugin_installation3.png?raw=true "Plugin Installation")<br/>
+<br/>
 ![Plugin Installation](/_img_/plugin_installation4.png?raw=true "Plugin Installation")<br/>
 <br/>
 Deploy your project!
 
-## Build/Compile Module
-1. Copy the "GodotBluetooth" folder to the *modules* folder inside of Godot's source code;
-2. Compile the Android Export Templates. [[docs]](http://docs.godotengine.org/en/stable/reference/compiling_for_android.html)
+## Building the Plugin
+TODO
 
-## Configure GodotBluetooth
-1. Add the module in the `engine.cfg`:
-```
-[android]
-modules="org/godotengine/godot/GodotBluetooth"
-```
-2. On the project *Export* settings, load the *Custom Package* with the "GodotBluetooth" compiled module templates.
+## Getting Started with GodotBluetooth
 
-**[note]** The mandatory permissions are already configured. They're: 
-
-```XML
-<uses-permission android:name="android.permission.BLUETOOTH" />
-<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-```
-
-## Initialize GodotBluetooth
-To use the module functions on your scripts, start the module as follows: 
+To use the bluetooth plugin you must first get and initialize the JNISingleton object:
 
 ```GDScript
 
-var bluetooth
+var bluetooth_controller:JNISingleton = null
 
-func _ready():
+func _ready() -> void:
 	if(Globals.has_singleton("GodotBluetooth")):
-		bluetooth = Globals.get_singleton("GodotBluetooth")
-		bluetooth.init(get_instance_ID(), true)
+		bluetooth_controller = Globals.get_singleton("GodotBluetooth")
+		bluetooth_controller.connect("status_updated", self, "_on_BluetoothController_status_updated")
+		bluetooth_controller.connect("error_thrown", self, "_on_BluetoothController_error_thrown")
+		bluetooth_controller.connect("device_found", self, "_on_BluetoothController_device_found")
+		bluetooth_controller.init(false)
 
 ```
 
-And declare the functions you need:
+Devices that are able to be communicated with must be paired before establishing a connection through this plugin. You can pair the devices in the settings of your android device.
+Ability to pair devices through this plugin can be added in the future.<br/>
+<br/>
+To get the list of paired devices:
 
 ```GDScript
 
-func getPairedDevices(boolNativeLayout):
-	if bluetooth:
-		bluetooth.getPairedDevices(boolNativeLayout)
+func poll_paired_devices(use_native_layout:bool) -> void:
+	if (bluetooth):
+		bluetooth.poll_paired_devices(use_native_layout)
 
 ```
-(You can learn more about *Singletons* and initializations [here](http://docs.godotengine.org/en/stable/tutorials/step_by_step/singletons_autoload.html)). 
 
-
-Then use the functions wherever you want, following the API reference below. 
-
-**[note]** The Android and the Microcontroller need to be paired before establishing a connection through this module for communication, you can use the options in the settings of your device to do this. Note that there is a difference between being paired and being connected, to be paired means that two devices are aware of each other's existence, to be connected means that the devices currently share an RFCOMM channel and are able to transmit data with each other.
+After calling poll_paried_devices, devices will be returned to GDScript through the signal device_found.<br/>
+You can use connect(device_id) to connect to a device from this list.<br/>
 
 ## API Reference
 The following functions are available:
