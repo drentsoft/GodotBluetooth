@@ -13,11 +13,8 @@ This fork is based on work done by [faverete](https://github.com/favarete/GodotB
 
 ## Available Featuress
 > Native dialog box layout for easy device connection
-
 > Easy implementation of custom layouts inside Godot 
-
 > Communication with microcontrollers with bluetooth
-
 > Communication between two mobile devices running android
 
 ## Plugin Installation
@@ -25,7 +22,7 @@ This module has been updated to be used with Godot's new android .aar based plug
 
 [Godot 3.3 Release Plugin](https://github.com/AC-Webbyninja/GodotBluetooth)<br/>
 [Godot 3.2.2 Release Plugin](https://github.com/AC-Webbyninja/GodotBluetooth)<br/>
-
+TODO: Add Releases ^^
 
 To install this plugin in your Godot, you must create a [custom android build](https://docs.godotengine.org/en/stable/getting_started/workflow/export/android_custom_build.html#doc-android-custom-build) for your project. Creating a custom android build
 in itself requires that you setup your system to [export for android](https://docs.godotengine.org/en/stable/getting_started/workflow/export/exporting_for_android.html#doc-exporting-for-android).<br/>
@@ -49,7 +46,7 @@ Make sure that "Bluetooth", "Bluetooth Admin", and "Access Fine Location" permis
 Deploy your project!
 
 ## Building the Plugin
-TODO
+TODO: Build instructions
 
 ## Getting Started with GodotBluetooth
 
@@ -92,8 +89,10 @@ You can use connect(device_id) to connect to a device from this list.<br/>
 ```GDScript
 func init(bluetooth_required:bool) -> void
 ```
+
 Initializes bluetooth functionality.<br/>
-The *bluetooth_required* is a boolean that tells if the bluetooth is required inside the game/application. If `true`, the game/application will close when the bluetooth is off and the user refuses to activate on the startup, if `false`, the game/application will continue in the occurrence of the same situation.
+<br/>
+*bluetooth_required* is a boolean that tells if the bluetooth is required inside the game/application. If `true`, the game/application will close when the bluetooth is off and the user refuses to activate on the startup, if `false`, the game/application will continue in the occurrence of the same situation.
 
 ___
 
@@ -102,8 +101,10 @@ ___
 ```GDScript
 func poll_paired_devices(use_native_layout:bool) -> void
 ```
+
 Polls the list of paired devices and returns them using the `device_found` signal.<br/>
-The *use_native_layout* is a boolean that tells the module that, if `true`, you want the *Device Native Layout* showing the list of paired devices, if `false`, you want to build your own *Custom Layout* inside Godot.  
+<br/>
+*use_native_layout* is a boolean that tells the module that, if `true`, you want the *Device Native Layout* showing the list of paired devices, if `false`, you want to build your own *Custom Layout* inside Godot.  
 
 **Connect**
 
@@ -111,8 +112,9 @@ The *use_native_layout* is a boolean that tells the module that, if `true`, you 
 func connect(device_id:int) -> void
 ```
 
-Attempts to connect to the given `device_id`.
-The *device_id* is an integer representing the device you want to connect. You only need to use this function when using *Custom Layouts*.
+Attempts to connect to the given `device_id`.<br/>
+<br/>
+*device_id* is an integer representing the device you want to connect. You only need to use this function when using *Custom Layouts*.
 
 ___
 
@@ -145,33 +147,86 @@ func get_uuid() -> String
 Returns the UUID of the current android device.
 
 ___
-**Callbacks**
+
+**Send Message**
 
 ```GDScript
-_on_data_received(String dataReceived)
-_on_disconnected()
-_on_single_device_found(String deviceName, String deviceAddress, String deviceID)
-_on_connected(String deviceName, String deviceAddress)
-_on_connected_error()
+func send_message() -> void
 ```
-The *dataReceived* is a string containing the data sended by the Microcontroller. On the `_on_single_device_found`, the *deviceName*, *deviceAddress* and *deviceID* are the informations found about each of the paired devices individually, as the Android bluetooth adapter finds them (see the *GodotBluetoothDemos* folder for an example of use), the same variables on the `_on_connected` shows the information about the device that has been connected after the user make a choice.
+
+Sends the cached message to the connected device.
 
 ___
 
-**Further Information And Demo Projects**
+**Get Device Name**
 
-For complete examples of usage for both *Native Layout* and *Custom Layout*, see the *GodotBluetoothDemos* folder. 
+```GDScript
+func get_device_name() -> String
+```
 
-![Godot Bluetooth](/_img_/layouts.png?raw=true "Native and Custom Layouts")
+Returns the bluetooth name of the current android device.
 
-**REMEMBER: You need to compile the module and add the binaries in the examples as per the instructions at the beginning of this file so that the examples work!**
+___
 
-The circuit used in the demos is quite simple, and can be seen below:
+**Get Device MAC Address**
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/favarete/GodotBluetooth/master/_img_/GodotBluetoothCircuitExample.png" alt="Arduino Circuit Example" width="50%" />
- </p>
+```GDScript
+func get_device_mac_address() -> String
+```
 
-The file *bluetoothExample.ino* containing the code used in Arduino, can be found inside the *GodotBluetoothDemos/Arduino* folder.
+Returns the bluetooth mac address of the current android device.
 
-Be creative! =)
+___
+
+**Is Server**
+
+```GDScript
+func is_server() -> bool
+```
+
+Returns whether or not the current android device is the server.
+
+___
+
+**Set Message Name**
+
+```GDScript
+func set_message_name(message_name:String) -> void
+
+Creates a new OSC message and sets the name of the message. It clears the any previously cached message.<br/>
+<br/>
+*message_name* is a `String` that sets the name of the OSC message that will be sent with `send_message()`.
+
+___
+
+**Add Message String**
+
+```GDScript
+func add_message_string(message_string:String) -> void
+```
+
+Adds a string of data on to the currently cached OSC message. Use `set_message_name(message_name)` to start a message.<br/>
+<br/>
+*message_string* is a `String` that contains data to be added to the cached message.
+
+___
+
+**Signals**
+
+```GDScript
+signal status_updated(status:String)
+signal error_thrown(error:String)
+signal device_found(device_id:int, device_name:String, device_address:String)
+signal device_connected(device_name:String, device_address:String)
+signal device_disconnected(device_name:String, device_address:String)
+signal connection_closed()
+signal connection_failed(java_connection_error:String)
+signal connection_received(device_name:String, device_address:String)
+signal message_received(message_string)
+```
+___
+
+## TODO
+> Add built .aar/.gdap releases<br/>
+> Add device pairing through godot<br/>
+> Finish readme documentation(Building)
