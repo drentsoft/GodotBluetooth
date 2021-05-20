@@ -107,10 +107,10 @@ Polls the list of paired devices and returns them using the `device_found` signa
 <br/>
 *use_native_layout* is a boolean that tells the module that, if `true`, you want the *Device Native Layout* showing the list of paired devices, if `false`, you want to build your own *Custom Layout* inside Godot.  
 
-**Connect**
+**Connect Device**
 
 ```GDScript
-func connect(device_id:int) -> void
+func connect_device(device_id:int) -> void
 ```
 
 Attempts to connect to the given `device_id`.<br/>

@@ -342,7 +342,7 @@ public class GodotBluetooth extends GodotPlugin {
             builder.setItems(externalDevicesDialogAux, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    connect(which);
+                    connect_device(which);
                 }
             });
             pairedDevicesListed = true;
@@ -390,7 +390,7 @@ public class GodotBluetooth extends GodotPlugin {
      */
 
     @UsedByGodot
-    public void connect(final int newExternalDeviceID){
+    public void connect_device(final int newExternalDeviceID){
 		emitSignal("status_updated", "attempting connection to device "+String.valueOf(newExternalDeviceID));
         if (initialized) {
 			if (pairedDevicesListed){
