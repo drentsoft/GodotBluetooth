@@ -427,7 +427,7 @@ public class GodotBluetooth extends GodotPlugin {
     @UsedByGodot
     public void close_connection()
     {
-        emitSignal("device_disconnected");
+        emitSignal("connection_closed");
         if (cThreadClient != null) {
 
             try {

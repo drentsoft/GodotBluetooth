@@ -1,0 +1,5 @@
+[config]
+
+name="GodotBluetooth"
+binary_type="local"
+binary="GodotBluetooth.aar"
