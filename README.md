@@ -133,7 +133,7 @@ Attempts to connect to the given `device_address`.<br/>
 
 ___
 
-**Native Select Paired Device*
+**Native Select Paired Device**
 
 ```GDScript
 func native_select_paired_device(override_connection:bool) -> void
@@ -214,15 +214,6 @@ Starts a discovery activity on your current device so other devices can discover
 Continuous broadcasting has been disabled and you must use a duration value greater than 0 seconds.<br/>
 <br/>
 *discovery_duration* is an `int` that determines how long in seconds that your device will broadcast for other devices to discover it.
-___
-
-**Send Message**
-
-```GDScript
-func send_message() -> void
-```
-
-Sends the cached message to the connected device.
 
 ___
 
