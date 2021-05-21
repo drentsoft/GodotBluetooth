@@ -67,8 +67,8 @@ func _ready() -> void:
 
 ```
 
-Devices that are able to be communicated with must be paired before establishing a connection through this plugin. You can pair the devices in the settings of your android device.
-Ability to pair devices through this plugin can be added in the future.<br/>
+Devices that are able to be communicated with should be paired before establishing a connection through this plugin. You can pair the devices in the settings of your android device.
+You can use device discovery to connect to a device that has not been paired in the settings.<br/>
 <br/>
 To get the list of paired devices:
 
@@ -118,6 +118,8 @@ Dictionary structure:<br/>
 	...
 }
 ```
+
+___
 
 **Connect Device**
 
