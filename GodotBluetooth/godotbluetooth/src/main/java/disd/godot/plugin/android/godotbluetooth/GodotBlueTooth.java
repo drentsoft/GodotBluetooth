@@ -20,7 +20,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.content.DialogInterface;
 import android.util.Log;
-import android.content.Intent;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -96,7 +95,20 @@ public class GodotBluetooth extends GodotPlugin {
     private static String sID = null;
     private static final String INSTALLATION = "INSTALLATION";
 	
-	private BroadcastReceiver discoveryReceiver = null;
+	private BroadcastReceiver discoveryReceiver = new BroadcastReceiver()
+	{
+		public void onReceive(Context context, Intent intent)
+		{
+			String action = intent.getAction();
+			if (BluetoothDevice.ACTION_FOUND.equals(action))
+			{
+			   BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+			   emitSignal("device_discovered", device.getName(), device.getAddress());
+			}
+		}
+	};
+	private boolean discoveryEnabled = false;
+	private int dataBufferSize = 2048;
 
     public GodotBluetooth(Godot godot)
 	{
@@ -118,7 +130,7 @@ public class GodotBluetooth extends GodotPlugin {
 		Set<SignalInfo> signals = new ArraySet<>();
 		
 		signals.add(new SignalInfo("status_logged", Integer.class, String.class));
-		signals.add(new SignalInfo("discovered_device", String.class, String.class));
+		signals.add(new SignalInfo("device_discovered", String.class, String.class));
 		signals.add(new SignalInfo("connection_closed"));
 		signals.add(new SignalInfo("connection_failed", String.class));
 		signals.add(new SignalInfo("connection_received", String.class, String.class));
@@ -135,11 +147,10 @@ public class GodotBluetooth extends GodotPlugin {
 	} 
 
     @UsedByGodot
-    public void init(final boolean newBluetoothRequired)
+    public void init(final boolean newDiscoveryEnabled, final boolean newBluetoothRequired, final int newDataBufferSize)
 	{
         if (!initialized)
 		{
-            //myUuid = setUuid(activity.getBaseContext());
             activity.runOnUiThread(new Runnable()
 			{
                 @Override
@@ -163,33 +174,21 @@ public class GodotBluetooth extends GodotPlugin {
                     socketConnections = new HashMap<String, BluetoothSocket>();
                     bluetoothRequired = newBluetoothRequired;
                     initialized = true;
+					dataBufferSize = newDataBufferSize;
 					emitSignal("status_logged", STATUS_UPDATE, "bluetooth initialized");
-                    /*localHandler = new Handler(Looper.getMainLooper())
+					if (newDiscoveryEnabled)
 					{
-                        @Override
-                        public void handleMessage(Message msg)
+						try
 						{
-							if(msg.what == MESSAGE_READ)
-							{
-								String newData = (String) msg.obj;
-								emitSignal("message_received", newData);
-								//receivedData.append(newData);
-								
-								int endElement = receivedData.indexOf("}");
-								if(endElement > 0)
-								{
-									String completeData = receivedData.substring(0, endElement);
-									int dataSize = completeData.length();
-									if(receivedData.charAt(0) == '{')
-									{
-                                        String finalizedData = receivedData.substring(1, dataSize);
-                                        emitSignal("message_received", finalizedData);
-									}
-                                    receivedData.delete(0, receivedData.length());
-								}
-							}
-                        }
-                    };*/
+							IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+							getApplicationUsingReflection().getApplicationContext().registerReceiver(discoveryReceiver, filter);
+							discoveryEnabled = true;
+						}
+						catch (Exception e)
+						{
+							emitSignal("status_logged", STATUS_ERROR, String.valueOf(e));
+						}
+					}
                 }
             });
         }
@@ -200,26 +199,13 @@ public class GodotBluetooth extends GodotPlugin {
 	{
 		if (initialized)
 		{
-			try
+			if (discoveryEnabled)
 			{
-				IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-				discoveryReceiver = new BroadcastReceiver()
-				{
-					public void onReceive(Context context, Intent intent)
-					{
-						String action = intent.getAction();
-						if (BluetoothDevice.ACTION_FOUND.equals(action))
-						{
-						   BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-						   emitSignal("discovered_device", device.getName(), device.getAddress());
-						}
-					}
-				};
-				getApplicationUsingReflection().getApplicationContext().registerReceiver(discoveryReceiver, filter);
+				bluetoothAdapter.startDiscovery();
 			}
-			catch(Exception e)
+			else
 			{
-				emitSignal("status_logged", STATUS_ERROR, String.valueOf(e));
+				emitSignal("status_logged", STATUS_ERROR, "device discovery not enabled");
 			}
 		}
 		else
@@ -229,32 +215,91 @@ public class GodotBluetooth extends GodotPlugin {
 	}
 	
 	@UsedByGodot
-	public void stop_discovery()
+	public void cancel_discovery()
 	{
-		try
+		if (initialized)
 		{
-			getApplicationUsingReflection().getApplicationContext().unregisterReceiver(discoveryReceiver);
+			if (discoveryEnabled)
+			{
+				bluetoothAdapter.cancelDiscovery();
+			}
+			else
+			{
+				emitSignal("status_logged", STATUS_ERROR, "device discovery not enabled");
+			}
 		}
-		catch (Exception e)
+		else
 		{
-			emitSignal("status_logged", STATUS_ERROR, String.valueOf(e));
+			emitSignal("status_logged", STATUS_ERROR, "bluetooth not initialized");
+		}
+	}
+	
+	@UsedByGodot
+	public void make_discoverable(final int discoveryDuration)
+	{
+		if (initialized)
+		{
+			if (discoveryEnabled)
+			{
+				if (connected)
+				{
+					if (discoveryDuration <= 0)
+					{
+						activity.runOnUiThread(new Runnable()
+						{
+							@Override
+							public void run()
+							{
+								int requestCode = 1;
+								Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+								discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, discoveryDuration);
+								activity.startActivityForResult(discoverableIntent, requestCode);
+							}
+						});
+					}
+					else
+					{
+						emitSignal("status_logged", STATUS_ERROR, "device discovery duration must be greater than 0 seconds, permanent discovery is insecure and discouraged");
+					}
+				}
+				emitSignal("status_logged", STATUS_ERROR, "cannot make device discoverable while a connection is open");
+			}
+			else
+			{
+				emitSignal("status_logged", STATUS_ERROR, "device discovery not enabled");
+			}
+		}
+		else
+		{
+			emitSignal("status_logged", STATUS_ERROR, "bluetooth not initialized");
 		}
 	}
 	
     @UsedByGodot
     public void start_server(final String sName)
     {
-        isServer = true;
-        if (aThread == null)
-        {
-			serverName = sName;
-            aThread = new AcceptThread();
-            aThread.start();
-			emitSignal("status_logged", STATUS_UPDATE, "server thread started");
-        }
+		if (initialized)
+		{
+			if (discoveryEnabled)
+			{
+				bluetoothAdapter.cancelDiscovery();
+			}
+			isServer = true;
+			if (aThread == null)
+			{
+				serverName = sName;
+				aThread = new AcceptThread();
+				aThread.start();
+				emitSignal("status_logged", STATUS_UPDATE, "server thread started");
+			}
+			else
+			{
+				emitSignal("status_logged", STATUS_ERROR, "server thread already running");
+			}
+		}
 		else
 		{
-			emitSignal("status_logged", STATUS_ERROR, "server thread already running");
+			emitSignal("status_logged", STATUS_ERROR, "bluetooth not initialized");
 		}
     }
 
@@ -316,7 +361,7 @@ public class GodotBluetooth extends GodotPlugin {
 				{
 					String deviceData = externalDevicesDialogAux[which];
 					String[] deviceDataSplit = deviceData.split("\n");
-                    connect_device(deviceDataSplit[0], deviceDataSplit[1]);
+                    connect_device(deviceDataSplit[1]);
                 }
             });
             AlertDialog dialog = builder.create();
@@ -348,11 +393,15 @@ public class GodotBluetooth extends GodotPlugin {
 	}
 
     @UsedByGodot
-    public void connect_device(final String deviceName, final String deviceAddress)
+    public void connect_device(final String deviceAddress)
 	{
 		emitSignal("status_logged", STATUS_UPDATE, "attempting connection to device with address "+deviceAddress);
         if (initialized)
 		{
+			if (discoveryEnabled)
+			{
+				bluetoothAdapter.cancelDiscovery();
+			}
 			activity.runOnUiThread(new Runnable()
 			{
 				@Override
@@ -608,7 +657,32 @@ public class GodotBluetooth extends GodotPlugin {
 	{
 		return initialized;
 	}
-
+	
+	@UsedByGodot
+	public void cleanup()
+	{
+		if (initialized)
+		{
+			if (discoveryEnabled)
+			{
+				try
+				{
+					getApplicationUsingReflection().getApplicationContext().unregisterReceiver(discoveryReceiver);
+				}
+				catch (Exception e)
+				{
+					emitSignal("status_logged", STATUS_ERROR, String.valueOf(e));
+				}
+			}
+			close_connection();
+			initialized = false;
+		}
+		else
+		{
+			emitSignal("status_logged", STATUS_ERROR, "bluetooth not initialized");
+		}
+	}
+	
     private class AcceptThread extends Thread
     {
         private final BluetoothServerSocket mmServerSocket;
@@ -705,7 +779,7 @@ public class GodotBluetooth extends GodotPlugin {
         public void run()
 		{
 
-            byte[] buffer = new byte[2048];
+            byte[] buffer = new byte[dataBufferSize];
             int bytes;
 
             while (true)
