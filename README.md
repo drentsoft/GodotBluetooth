@@ -63,10 +63,7 @@ var bluetooth_controller:JNISingleton = null
 func _ready() -> void:
 	if(Globals.has_singleton("GodotBluetooth")):
 		bluetooth_controller = Globals.get_singleton("GodotBluetooth")
-		bluetooth_controller.connect("status_updated", self, "_on_BluetoothController_status_updated")
-		bluetooth_controller.connect("error_thrown", self, "_on_BluetoothController_error_thrown")
-		bluetooth_controller.connect("device_found", self, "_on_BluetoothController_device_found")
-		bluetooth_controller.init(false)
+		bluetooth_controller.init(false, false, 2048)
 
 ```
 
@@ -77,14 +74,16 @@ To get the list of paired devices:
 
 ```GDScript
 
-func poll_paired_devices(use_native_layout:bool) -> void:
-	if (bluetooth_controller):
-		bluetooth_controller.poll_paired_devices(use_native_layout)
+if (bluetooth_controller):
+	var paired_devices:Dictionary = bluetooth_controller.get_paired_devices()
 
 ```
 
-After calling poll_paired_devices, devices will be returned to GDScript through the signal device_found.<br/>
-You can use connect(device_id) to connect to a device from this list.<br/>
+To connect to a device from the list:
+
+```GDScript
+bluetooth_controller.connect_device(paired_devices.device_0.device_address)
+```
 
 ## API Reference
 
