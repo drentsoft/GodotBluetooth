@@ -23,8 +23,8 @@ This fork is based on work done by [faverete](https://github.com/favarete/GodotB
 ## Plugin Installation
 This module has been updated to be used with Godot's new android .aar based plugin system, and so, it must be used with Godot 3.2.2+
 
-[Godot 3.3.1 Release Plugin](https://github.com/AC-Webbyninja/GodotBluetooth/releases/tag/3.3.1)<br/>
-[Godot 3.3 Release Plugin](https://github.com/AC-Webbyninja/GodotBluetooth/releases/tag/3.3)<br/>
+[Godot 3.3.1 Plugin Release (GodotBluetooth v1.1)](https://github.com/AC-Webbyninja/GodotBluetooth/releases/tag/1.1_(3.3.1))<br/>
+[Godot 3.3 Plugin Release (GodotBluetooth v1.1)](https://github.com/AC-Webbyninja/GodotBluetooth/releases/tag/1.1)<br/>
 <br/>
 **[Note]** *Newer builds may successfully compile, but not fully be bug tested. They may result in unexpected crashes.*
 
@@ -212,7 +212,7 @@ func make_discoverable(discovery_duration:int) -> void
 Starts a discovery activity on your current device so other devices can discover your device by using *start_discovery*. This is a system process and uses a lot of battery and bandwidth.
 Continuous broadcasting has been disabled and you must use a duration value greater than 0 seconds.<br/>
 <br/>
-*discovery_duration is an `int` that determines how long in seconds that your device will broadcast for other devices to discover it.
+*discovery_duration* is an `int` that determines how long in seconds that your device will broadcast for other devices to discover it.
 ___
 
 **Send Message**
@@ -251,7 +251,7 @@ ___
 func send_data(data:String) -> void
 ```
 
-Send data sends a `String` of data as bytes over the bluetooth socket.
+Sends a `String` of data as bytes over the bluetooth socket.
 
 ___
 
@@ -261,7 +261,7 @@ ___
 func send_raw_data(raw_data:PoolByteArray) -> void
 ```
 
-Send raw data sends a `byte` array over the bluetooth socket.
+Sends a `byte` array over the bluetooth socket.
 
 **Is Server**
 
